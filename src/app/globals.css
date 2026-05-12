@@ -1,26 +1,165 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
+  --color-liverpool: #C8102E;
+  --color-liverpool-dark: #990C22;
+  --color-liverpool-glow: rgba(200, 16, 46, 0.4);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #000000;
+  --foreground: #ffffff;
+  --text-body: #d1d5db;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px var(--color-liverpool-glow);
+  }
+  
+  .box-glow {
+    box-shadow: 0 0 30px var(--color-liverpool-glow);
+  }
+
+  .glass-card {
+    background: rgba(20, 20, 25, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .glass-card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .glass-card-hover:hover {
+    background: rgba(30, 30, 38, 0.8);
+    border: 1px solid rgba(200, 16, 46, 0.35);
+    box-shadow: 0 0 25px rgba(200, 16, 46, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Improved text contrast classes */
+  .text-body {
+    color: var(--text-body);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+}
+
+/* Base animations */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+/* Progress bar glow */
+@keyframes progress-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(200, 16, 46, 0.4), 0 0 20px rgba(200, 16, 46, 0.2); }
+  50% { box-shadow: 0 0 15px rgba(200, 16, 46, 0.6), 0 0 30px rgba(200, 16, 46, 0.3); }
+}
+
+.progress-glow {
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+/* Countdown timer digits */
+@keyframes countdown-tick {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.countdown-digit {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Twitter/X card accent */
+.tweet-card {
+  border-left: 4px solid #C8102E;
+  transition: border-color 0.3s ease;
+}
+
+.tweet-card:hover {
+  border-left-color: #E53E3E;
+}
+
+/* Verified badge shimmer */
+@keyframes badge-shimmer {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
+}
+
+.verified-badge {
+  animation: badge-shimmer 3s ease-in-out infinite;
+}
+
+/* Remove scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-liverpool);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  .glass-card-hover:hover {
+    transform: none;
+  }
+}
+
+/* Ensure minimum tap target sizes */
+@media (pointer: coarse) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Footer styles */
+.footer-link {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--color-liverpool);
 }
