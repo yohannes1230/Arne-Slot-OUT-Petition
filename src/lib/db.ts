@@ -14,14 +14,19 @@ export async function getSignatureCount() {
     query = query.eq('id', PETITION_ID);
   }
 
-  const { data, error } = await query.limit(1).single<{ total_signatures: number }>();
+  try {
+    const { data, error } = await query.limit(1).single<{ total_signatures: number }>();
 
-  if (error) {
-    console.error('Error fetching petition count:', error);
+    if (error) {
+      console.error('Error fetching petition count:', error);
+      return 0;
+    }
+
+    return data?.total_signatures ?? 0;
+  } catch (err) {
+    console.error('Fetch exception when getting signature count:', err);
     return 0;
   }
-
-  return data?.total_signatures ?? 0;
 }
 
 export async function signPetition(payload: SignPetitionPayload) {
