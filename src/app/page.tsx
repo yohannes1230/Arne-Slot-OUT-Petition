@@ -9,16 +9,47 @@ import { LiveFeed } from "@/components/LiveFeed";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { Footer } from "@/components/Footer";
 import { assetPath } from "@/lib/assets";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 import Image from "next/image";
 
 const INITIAL_COUNT = 248391;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: SITE_TITLE,
+  headline: "Arne Slot Out",
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  image: `${SITE_URL}/og-image.png`,
+  isPartOf: {
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+  },
+  about: [
+    {
+      "@type": "Person",
+      name: "Arne Slot",
+    },
+    {
+      "@type": "SportsTeam",
+      name: "Liverpool FC",
+    },
+  ],
+  inLanguage: "en-GB",
+};
 
 export default function Page() {
   const initialCount = INITIAL_COUNT;
 
   return (
     <main className="relative min-h-screen flex flex-col w-full selection:bg-red-600 selection:text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       {/* Cinematic Background Elements */}
       <div className="fixed inset-0 z-0 bg-black overflow-hidden pointer-events-none">
         {/* Arne Slot Photo - Large, prominent background */}
