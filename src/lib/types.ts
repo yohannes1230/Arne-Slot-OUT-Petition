@@ -5,16 +5,16 @@ export interface Database {
         Tables: {
             petitions: {
                 Row: {
-                    id: number;
+                    id: string;
                     total_signatures: number;
                     updated_at: string | null;
                 };
                 Insert: {
-                    id?: number;
+                    id?: string;
                     total_signatures?: number;
                 };
                 Update: {
-                    id?: number;
+                    id?: string;
                     total_signatures?: number;
                 };
             };
@@ -22,11 +22,11 @@ export interface Database {
         Functions: {
             sign_petition: {
                 Args: {
-                    petition_id: number;
-                    ip_address: string;
-                    fingerprint: string;
-                    country?: string;
-                    city?: string;
+                    p_petition_id: string;
+                    p_ip: string;
+                    p_fingerprint: string;
+                    p_country?: string;
+                    p_city?: string;
                 };
                 Returns: {
                     success: boolean;

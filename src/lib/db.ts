@@ -12,6 +12,21 @@ type SignPetitionRpcClient = {
   ) => Promise<{ data: unknown; error: RpcError | null }>;
 };
 
+async function getPetitionId() {
+  if (PETITION_ID) {
+    return PETITION_ID;
+  }
+
+  const { data, error } = await supabase.from('petitions').select('id').limit(1).single<{ id: string }>();
+
+  if (error || !data?.id) {
+    console.error('Error fetching petition id:', error);
+    return null;
+  }
+
+  return data.id;
+}
+
 export async function getSignatureCount() {
   if (!hasSupabaseConfig) {
     return 0;
@@ -52,4 +67,28 @@ export async function signPetition(payload: SignPetitionPayload): Promise<SignPe
   }
 
   return data as unknown as SignPetitionResult;
+}
+
+export async function signCurrentPetition(args: {
+  fingerprint: string;
+  country?: string;
+  city?: string;
+}): Promise<SignPetitionResult | null> {
+  if (!hasSupabaseConfig) {
+    return null;
+  }
+
+  const petitionId = await getPetitionId();
+
+  if (!petitionId) {
+    return null;
+  }
+
+  return signPetition({
+    p_petition_id: petitionId,
+    p_ip: 'browser',
+    p_fingerprint: args.fingerprint,
+    p_country: args.country,
+    p_city: args.city,
+  });
 }

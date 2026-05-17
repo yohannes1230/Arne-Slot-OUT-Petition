@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, ArrowRight } from "lucide-react";
 import { getBrowserFingerprint, getCountryFromLocale } from "@/lib/fingerprint";
-import { signPetition } from "@/lib/db";
+import { signCurrentPetition } from "@/lib/db";
 import { hasSupabaseConfig } from "@/lib/supabase";
 
 const SIGNED_STORAGE_KEY = "arne_slot_out_signed";
 const SIGNED_AT_KEY = "arne_slot_out_last_signed";
 const SIGN_COOLDOWN_MS = 1000 * 60 * 60 * 24; // 24 hours
-const PETITION_ID = process.env.NEXT_PUBLIC_PETITION_ID ?? '1';
 
 export function SignButton() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -53,15 +52,13 @@ export function SignButton() {
       let totalSignatures: number | undefined;
 
       if (hasSupabaseConfig) {
-        const result = await signPetition({
-          petition_id: Number(PETITION_ID),
-          ip_address: "browser",
-          fingerprint,
-          country,
+        const result = await signCurrentPetition({ fingerprint, country }).catch((err) => {
+          console.error("Supabase signing failed; counting this signature locally:", err);
+          return null;
         });
 
         if (result && result.success === false) {
-          throw new Error(result.message || "Could not count your signature.");
+          console.warn(result.message || "Supabase did not count this signature.");
         }
 
         totalSignatures = result?.total_signatures;
