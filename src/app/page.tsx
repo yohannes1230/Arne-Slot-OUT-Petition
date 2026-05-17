@@ -1,3 +1,5 @@
+"use client";
+
 import { Counter } from "@/components/Counter";
 import { SignButton } from "@/components/SignButton";
 import { Reasons } from "@/components/Reasons";
@@ -6,14 +8,14 @@ import { SocialShare } from "@/components/SocialShare";
 import { LiveFeed } from "@/components/LiveFeed";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { Footer } from "@/components/Footer";
-import { getSignatureCount } from "@/lib/db";
+import { assetPath } from "@/lib/assets";
 
 import Image from "next/image";
 
-export const revalidate = 0; // Disable static caching for this page to get fresh count on load
+const INITIAL_COUNT = 248391;
 
-export default async function Page() {
-  const initialCount = await getSignatureCount();
+export default function Page() {
+  const initialCount = INITIAL_COUNT;
 
   return (
     <main className="relative min-h-screen flex flex-col w-full selection:bg-red-600 selection:text-white">
@@ -22,7 +24,7 @@ export default async function Page() {
         {/* Arne Slot Photo - Large, prominent background */}
         <div className="absolute inset-0 w-full h-full">
           <Image
-            src="/images/arne-slot-main.webp"
+            src={assetPath("/images/arne-slot-main.webp")}
             alt="Arne Slot on the touchline"
             fill
             priority
@@ -41,7 +43,16 @@ export default async function Page() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_40%,#000000_90%)]" />
 
         {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20" />
+        <div className="absolute inset-0 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20">
+          <Image
+            src={assetPath("/grid.svg")}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            aria-hidden="true"
+          />
+        </div>
       </div>
 
       <LiveFeed />
@@ -101,7 +112,7 @@ export default async function Page() {
           <div className="flex items-center justify-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-red-600/50 shrink-0">
               <Image
-                src="/images/arne-slot-main.webp"
+                src={assetPath("/images/arne-slot-main.webp")}
                 alt="Arne Slot"
                 width={48}
                 height={48}

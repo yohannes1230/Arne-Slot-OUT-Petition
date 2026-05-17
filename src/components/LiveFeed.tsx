@@ -37,11 +37,13 @@ export function LiveFeed() {
 
   useEffect(() => {
     // Start with 2 initial items
-    setFeed([
-      { id: Date.now() - 1000, name: getRandomName(), location: getRandomLocation(), timeStr: "Just now" },
-      { id: Date.now() - 5000, name: getRandomName(), location: getRandomLocation(), timeStr: "5 seconds ago" },
-      { id: Date.now() - 12000, name: getRandomName(), location: getRandomLocation(), timeStr: "12 seconds ago" }
-    ]);
+    setTimeout(() => {
+      setFeed([
+        { id: Date.now() - 1000, name: getRandomName(), location: getRandomLocation(), timeStr: "Just now" },
+        { id: Date.now() - 5000, name: getRandomName(), location: getRandomLocation(), timeStr: "5 seconds ago" },
+        { id: Date.now() - 12000, name: getRandomName(), location: getRandomLocation(), timeStr: "12 seconds ago" }
+      ]);
+    }, 0);
 
     // Randomly add new items to simulate live activity
     const interval = setInterval(() => {

@@ -6,11 +6,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    
     "build": "next build",
+    "build:github": "cross-env GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/Arne-Slot-OUT-Petition next build && node scripts/prepare-github-pages.mjs",
     "start": "next start",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build:github",
+    "deploy": "gh-pages -d out --dotfiles --nojekyll",
     "lint": "eslint"
   },
   "dependencies": {
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "cross-env": "^7.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

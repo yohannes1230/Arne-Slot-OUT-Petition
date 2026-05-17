@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "./ui/card";
 import { MessageCircle, Heart, Repeat2, BadgeCheck } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 
 const reactions = [
   {
@@ -32,7 +33,7 @@ const reactions = [
     name: "True Red",
     verified: false,
     content: "I've seen enough. The players look lost, the manager looks out of ideas. Every press conference is the same empty words. The board needs to act now before we lose everything. #LFC #SlotOut",
-    image: "/images/arne-slot-thumb.png",
+    image: "/images/arne-slot-main.webp",
     time: "1h",
     date: "May 11, 2026",
     likes: "3.1k",
@@ -101,7 +102,7 @@ export function Reactions() {
 
               {reaction.image && (
                 <div className="mb-6 rounded-xl overflow-hidden border border-white/10 relative h-48 md:h-64 w-full">
-                  <img src={reaction.image} alt="Tweet attachment" className="absolute inset-0 w-full h-full object-cover object-top grayscale" />
+                  <img src={assetPath(reaction.image)} alt="Tweet attachment" className="absolute inset-0 w-full h-full object-cover object-top grayscale" />
                 </div>
               )}
 

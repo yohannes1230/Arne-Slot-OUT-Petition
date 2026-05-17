@@ -53,8 +53,16 @@ To make the petition fully functional in production:
 Note: If no Supabase environment variables are provided, the application will run in "mock" mode, storing the count in memory for testing purposes.
 
 ## Deployment
-This project is ready to be deployed on Vercel:
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add your environment variables in the Vercel dashboard
-4. Deploy!
+### GitHub Pages
+This repository is configured to export a static Next.js site and deploy it to GitHub Pages.
+
+1. Push your code to GitHub.
+2. Ensure the repository is named `Arne-Slot-OUT-Petition` or update `homepage` and `basePath` accordingly.
+3. Run:
+   ```bash
+   npm install
+   npm run deploy
+   ```
+4. The site will be published to `https://yohannes1230.github.io/Arne-Slot-OUT-Petition`.
+
+> Note: GitHub Pages only hosts static content. The petition button is now handled locally in the browser for deployment on GitHub Pages.

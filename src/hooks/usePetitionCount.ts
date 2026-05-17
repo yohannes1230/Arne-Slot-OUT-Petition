@@ -1,49 +1,50 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-
-const PETITION_ID = process.env.NEXT_PUBLIC_PETITION_ID;
+import { getSignatureCount } from '@/lib/db';
+import { hasSupabaseConfig } from '@/lib/supabase';
 
 export function usePetitionCount(initialCount: number) {
     const [count, setCount] = useState(initialCount);
-    const [isRealtimeConnected, setRealtimeConnected] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [isRealtimeConnected] = useState(false);
+    const [error] = useState<string | null>(null);
 
     useEffect(() => {
-        setCount(initialCount);
-    }, [initialCount]);
-
-    useEffect(() => {
-        const filter = PETITION_ID ? `id=eq.${PETITION_ID}` : undefined;
-        const eventConfig: Record<string, unknown> = {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'petitions'
-        };
-
-        if (filter) {
-            eventConfig.filter = filter;
+        if (!hasSupabaseConfig) {
+            return;
         }
 
-        const channel = (supabase as any)
-            .channel('petition-count')
-            .on(
-                'postgres_changes',
-                eventConfig,
-                (payload: any) => {
-                    const updatedCount = Number(payload.new?.total_signatures ?? initialCount);
-                    setCount(updatedCount);
-                }
-            );
+        let isMounted = true;
 
-        void channel.subscribe();
-        setRealtimeConnected(true);
+        getSignatureCount().then((latestCount) => {
+            if (isMounted && latestCount > 0) {
+                setCount(latestCount);
+            }
+        });
 
         return () => {
-            void supabase.removeChannel(channel);
+            isMounted = false;
         };
-    }, [initialCount]);
+    }, []);
+
+    useEffect(() => {
+        const handleSigned = (e: Event) => {
+            const detail = (e as CustomEvent).detail as {
+                increment?: number;
+                totalSignatures?: number;
+            } | undefined;
+
+            if (typeof detail?.totalSignatures === 'number') {
+                setCount(detail.totalSignatures);
+                return;
+            }
+
+            setCount((prev) => prev + (detail?.increment ?? 1));
+        };
+
+        window.addEventListener('petitionSigned', handleSigned as EventListener);
+        return () => window.removeEventListener('petitionSigned', handleSigned as EventListener);
+    }, []);
 
     return { count, setCount, isRealtimeConnected, error };
 }

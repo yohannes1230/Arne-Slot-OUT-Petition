@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-outfit);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-heading: Impact, "Arial Black", Arial, Helvetica, sans-serif;
   --color-liverpool: #C8102E;
   --color-liverpool-dark: #990C22;
   --color-liverpool-glow: rgba(200, 16, 46, 0.4);

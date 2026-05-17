@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { useRef } from "react";
 import { TrendingUp } from "lucide-react";
@@ -11,16 +11,13 @@ interface CounterProps {
 }
 
 export function Counter({ initialCount = 248391 }: CounterProps) {
-  const { count, setCount } = usePetitionCount(initialCount);
+  const { count } = usePetitionCount(initialCount);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const controls = useAnimation();
 
   useEffect(() => {
-    const handleSigned = (e: CustomEvent) => {
-      setCount(prev => Math.max(prev + 1, e.detail?.count || prev + 1));
-
-      // Trigger a pulse animation on the counter
+    const handleSigned = () => {
       controls.start({
         scale: [1, 1.1, 1],
         color: ["#ffffff", "#C8102E", "#ffffff"],
@@ -28,11 +25,11 @@ export function Counter({ initialCount = 248391 }: CounterProps) {
       });
     };
 
-    window.addEventListener("petitionSigned" as any, handleSigned);
+    window.addEventListener("petitionSigned", handleSigned);
     return () => {
-      window.removeEventListener("petitionSigned" as any, handleSigned);
+      window.removeEventListener("petitionSigned", handleSigned);
     };
-  }, [controls, setCount]);
+  }, [controls]);
   useEffect(() => {
     if (isInView) {
       controls.start({ opacity: 1, y: 0 });

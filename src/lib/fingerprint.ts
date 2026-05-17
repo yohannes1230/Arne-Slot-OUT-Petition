@@ -3,6 +3,7 @@ export async function getBrowserFingerprint(): Promise<string> {
         return 'unknown';
     }
 
+    const navigatorWithMemory = navigator as Navigator & { deviceMemory?: number };
     const values = [
         navigator.userAgent,
         navigator.language,
@@ -11,7 +12,7 @@ export async function getBrowserFingerprint(): Promise<string> {
         screen.width,
         screen.height,
         screen.colorDepth,
-        (navigator as any).deviceMemory ?? 'unknown',
+        navigatorWithMemory.deviceMemory ?? 'unknown',
         navigator.hardwareConcurrency ?? 'unknown',
         Intl.DateTimeFormat().resolvedOptions().timeZone,
     ];

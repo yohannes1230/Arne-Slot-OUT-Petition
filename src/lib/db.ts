@@ -1,13 +1,22 @@
-import { supabase } from '@/lib/supabase';
-import type { SignPetitionArgs } from '@/lib/types';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+import type { SignPetitionArgs, SignPetitionResult } from '@/lib/types';
 
 const PETITION_ID = process.env.NEXT_PUBLIC_PETITION_ID;
 
-type SignPetitionPayload = Omit<SignPetitionArgs, 'petition_id'> & {
-  petition_id: string | number;
+type SignPetitionPayload = SignPetitionArgs;
+type RpcError = { message: string };
+type SignPetitionRpcClient = {
+  rpc: (
+    functionName: 'sign_petition',
+    args: SignPetitionPayload
+  ) => Promise<{ data: unknown; error: RpcError | null }>;
 };
 
 export async function getSignatureCount() {
+  if (!hasSupabaseConfig) {
+    return 0;
+  }
+
   let query = supabase.from('petitions').select('total_signatures');
 
   if (PETITION_ID) {
@@ -29,13 +38,18 @@ export async function getSignatureCount() {
   }
 }
 
-export async function signPetition(payload: SignPetitionPayload) {
-  const { data, error } = await (supabase as any).rpc('sign_petition', payload);
+export async function signPetition(payload: SignPetitionPayload): Promise<SignPetitionResult | null> {
+  if (!hasSupabaseConfig) {
+    return null;
+  }
+
+  const rpcClient = supabase as unknown as SignPetitionRpcClient;
+  const { data, error } = await rpcClient.rpc('sign_petition', payload);
 
   if (error) {
     console.error('Error calling sign_petition RPC:', error);
     throw error;
   }
 
-  return data;
+  return data as unknown as SignPetitionResult;
 }

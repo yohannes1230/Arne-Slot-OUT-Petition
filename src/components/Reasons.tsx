@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "./ui/card";
 import { Brain, Link2, TrendingDown } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 
 const reasons = [
   {
@@ -71,7 +72,7 @@ export function Reasons() {
               {/* Optional Watermark for the first card */}
               {idx === 0 && (
                 <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-luminosity">
-                  <img src="/images/arne-slot-thumb.png" alt="" className="w-full h-full object-cover grayscale" />
+                  <img src={assetPath("/images/arne-slot-main.webp")} alt="" className="w-full h-full object-cover grayscale" />
                 </div>
               )}
 

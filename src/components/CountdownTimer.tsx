@@ -47,7 +47,7 @@ export function CountdownTimer() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
     const interval = setInterval(() => {
       setTimeLeft(getTimeLeft());
     }, 1000);

@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   title: "Arne Slot Out | Liverpool Fans Demand Change",
@@ -46,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${outfit.variable}`}>
+    <html lang="en" className="dark">
       <body className="bg-black text-white min-h-screen font-sans antialiased overflow-x-hidden selection:bg-red-600 selection:text-white">
         {children}
       </body>

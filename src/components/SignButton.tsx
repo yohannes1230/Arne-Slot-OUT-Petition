@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, ArrowRight } from "lucide-react";
 import { getBrowserFingerprint, getCountryFromLocale } from "@/lib/fingerprint";
+import { signPetition } from "@/lib/db";
+import { hasSupabaseConfig } from "@/lib/supabase";
 
 const SIGNED_STORAGE_KEY = "arne_slot_out_signed";
 const SIGNED_AT_KEY = "arne_slot_out_last_signed";
@@ -20,7 +22,7 @@ export function SignButton() {
       const signedAt = Number(localStorage.getItem(SIGNED_AT_KEY) || "0");
 
       if (hasSigned || (signedAt && Date.now() - signedAt < SIGN_COOLDOWN_MS)) {
-        setStatus("success");
+        setTimeout(() => setStatus("success"), 0);
       }
     }
   }, []);
@@ -48,28 +50,34 @@ export function SignButton() {
     try {
       const fingerprint = await getBrowserFingerprint();
       const country = getCountryFromLocale();
+      let totalSignatures: number | undefined;
 
-      const res = await fetch("/api/signatures", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ petition_id: PETITION_ID, fingerprint, country }),
-      });
+      if (hasSupabaseConfig) {
+        const result = await signPetition({
+          petition_id: Number(PETITION_ID),
+          ip_address: "browser",
+          fingerprint,
+          country,
+        });
 
-      const data = await res.json();
+        if (result && result.success === false) {
+          throw new Error(result.message || "Could not count your signature.");
+        }
 
-      if (res.ok) {
-        setStatus("success");
-        localStorage.setItem(SIGNED_STORAGE_KEY, "true");
-        localStorage.setItem(SIGNED_AT_KEY, Date.now().toString());
-
+        totalSignatures = result?.total_signatures;
       } else {
-        setStatus("error");
-        setErrorMessage(data.error || "Failed to sign. Try again.");
-        setTimeout(() => setStatus("idle"), 3000);
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
+
+      setStatus("success");
+      localStorage.setItem(SIGNED_STORAGE_KEY, "true");
+      localStorage.setItem(SIGNED_AT_KEY, Date.now().toString());
+      window.dispatchEvent(new CustomEvent('petitionSigned', {
+        detail: totalSignatures ? { totalSignatures } : { increment: 1 },
+      }));
     } catch (err) {
       setStatus("error");
-      setErrorMessage("Network error. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "Network error. Please try again.");
       setTimeout(() => setStatus("idle"), 3000);
     }
   };
